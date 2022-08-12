@@ -1,5 +1,39 @@
-import budget_cls as bd
 import sys
+
+class Budget:
+
+    def __init__(self, category, budget_set):
+        self.category = category
+        self.__budget_set = budget_set
+        self.budget_trans = budget_set
+
+    def category_name(self):
+        return self.category
+
+    def __budget_set(self):
+        return self.__budget_set
+
+    def budget_s(self):
+        return self.__budget_set
+
+    def transaction(self, trans_amount):
+        self.budget_trans -= trans_amount
+        return self.budget_trans
+
+    def __add__(self, other):
+        print(f"Sum budget of '{self.category}' and '{other.category}' is {self.budget_s() + other.budget_s()} USD.")
+        
+    @classmethod
+    def from_file(cls, line):
+        line_lst = line.rstrip(" USD\n").split(" : ")
+        category, budget_from_file = line_lst
+        budget_from_file = int(budget_from_file.replace(",",""))
+        return cls(category, budget_from_file)
+
+    def __str__(self):
+        return f"The budget set for {self.category}: {self.budget_s():,} USD"
+
+# Divide:
 
 def budget_set (): # Create categories and budget.
     budget_dict = {}
@@ -12,7 +46,11 @@ def budget_set (): # Create categories and budget.
                 break
             except:
                 print("Invalid value. Try again")
-        budget_dict[inp_categories] = category_budget
+        # Check if new category input exist or not
+        if inp_categories in budget_dict: # new category exist, budget will be combine.
+            budget_dict[inp_categories] += category_budget
+        else: 
+            budget_dict[inp_categories] = category_budget
         categories.add(inp_categories)
         completed_budget_add = input("\nEnter Y if completed add or press any key to continue: ")
         if completed_budget_add.upper() == "Y":
@@ -22,23 +60,25 @@ def budget_set (): # Create categories and budget.
     print("As detail below:")
 
     budget_dict_s = sorted(budget_dict.items())
+    
     for key, value in budget_dict_s:
         print('Budget for "{}": {:,} USD'.format(key,value))
-    file_name = input('Name your budget file in ".txt": ')
-    with open(file_name,"w") as wf:
+    file_name = input('\nName your budget file in ".txt": ')
+
+    with open(file_name,"w") as wf: # Write categories and budget into text file.
         for k, v in budget_dict_s:
             wf.write('{} : {:,} USD\n'.format(k,v))
     return (budget_dict_s, categories, file_name)
     
 def budget_after (file_inp):   
     '''Create function to calculate budget after transactions
-    read and write file before and after transactions'''
+        read and write file before and after transactions'''
     
     with open(file_inp, "r") as rf:
         file_name_output = input("\nName your budget file after transactions in '.txt': ")
         with open(file_name_output, "w") as wf:
             for line in rf:
-                cate = bd.Budget.from_file(line)
+                cate = Budget.from_file(line)
                 while True:
                     inp = input(f"How much did you spend on '{cate.category_name()}' (as int in USD): ")
                     if inp.isnumeric():
@@ -51,32 +91,10 @@ def budget_after (file_inp):
                 wf.write('{} : {:,} USD\n'.format(cate.category_name(),budget_aft_trans))
     return file_name_output
 
-def main():
-    name = input("What is your name: ")
-    print(f"Hi {name}!. Welcome to Budget App. \n")
-    inp = input("Would you like to set up your budget? Y/N: ")
-    if inp.upper() == "Y":
-        budget_set()
-    else:
-        print("Goodbye!")
-        sys.exit()
-    while True:
-        inp2 = input("\nDo you want to make transactions:Y/N: ")
-        if inp2.upper() == "Y":
-            while True:
-                try:
-                    file_name_input = input(f"\nEnter your budget file '.txt': ")
-                    print(f"Confirmed your budget file input is '{file_name_input}'.")
-                    file_report = budget_after(file_name_input)    
-                except FileNotFoundError:
-                    print(f"'{file_name_input}' not exist. Try again.")
-                else:
-                    print(f"Your latest budget report' name after transactions:'{file_report}'")
-                    break
-        else:
-            print("Goodbye!")
-            sys.exit()
-
 if __name__ == "__main__":
-    main()
-    
+    ca1 = Budget("House", 450)
+    ca2 = Budget("Food", 200)
+    assert ca1.category_name() == "House", "Value is wrong"
+    print("Test 1 is passed.")
+    assert ca1.transaction(50) == 400, "Value is wrong"
+    print("Test 2 is passed.")
