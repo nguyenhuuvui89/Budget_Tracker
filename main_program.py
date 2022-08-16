@@ -1,14 +1,15 @@
 import sys
 import budget_function
 from budget_function import Budget
-def main():
+
+if __name__ == "__main__":
     name = input("What is your name: ")
     print(f"Hi {name}!. Welcome to Budget App. \n")
     inp = input("Would you like to set up your budget? Y/N: ")
     if inp.upper() == "Y":
         budget_function.budget_set()
     else:
-        print("Goodbye!")
+        print("Goodbye!. See you.")
         sys.exit()
     while True:
         inp2 = input("\nDo you want to make transactions:Y/N: ")
@@ -31,5 +32,4 @@ def main():
             print("\nGoodbye!. Thanks for using Budget App.\n")
             sys.exit()
 
-if __name__ == "__main__":
-    main()
+

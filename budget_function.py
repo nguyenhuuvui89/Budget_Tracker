@@ -1,28 +1,33 @@
-import sys
-
+import datetime
 class Budget:
-
-    def __init__(self, category, budget_set):
+    def __init__(self, category, budget_set, budget_dev = 0):
         self.category = category
         self.__budget_set = budget_set
-        self.budget_trans = budget_set
-
+        self.budget_after_trans = budget_set
+        self.budget_dev = 0
     def category_name(self):
         return self.category
 
-    def __budget_set(self):
-        return self.__budget_set
-
     def budget_s(self):
         return self.__budget_set
-
-    def transaction(self, trans_amount):
-        self.budget_trans -= trans_amount
-        return self.budget_trans
-
-    def __add__(self, other):
-        print(f"Sum budget of '{self.category}' and '{other.category}' is {self.budget_s() + other.budget_s()} USD.")
         
+    def __transaction(self, trans_amount):
+        self.budget_after_trans -= trans_amount
+        return self.budget_after_trans
+
+    def wf_budget_trans (self, trans_amount):
+        return '{} : {:,} USD\n'.format(self.category_name(),self.__transaction(trans_amount))
+
+    def budget_d (self):
+        self.budget_dev = self.budget_after_trans
+        if self.budget_dev> 0:
+            return f"{self.category_name()}' budget remain {self.budget_dev}"
+        else:
+            return f"{self.category_name()}' budget is overdraft ${self.budget_dev}"
+
+    def transaction_msg (self, trans_amount):
+        return f"Your '{self.category_name()}' budget: ${self.budget_s():,} - ${trans_amount:,} = {self.budget_after_trans:,} USD\n"
+
     @classmethod
     def from_file(cls, line):
         line_lst = line.rstrip(" USD\n").split(" : ")
@@ -30,10 +35,27 @@ class Budget:
         budget_from_file = int(budget_from_file.replace(",",""))
         return cls(category, budget_from_file)
 
+    def __add__(self, other):
+        return f"Sum budget '{self.category}' and '{other.category}':\
+                 {self.__budget_set + other.__budget_set} USD."
+    
+    def __len__(self):
+        return len(self.category)
+
     def __str__(self):
-        return f"The budget set for {self.category}: {self.budget_s():,} USD"
+        return f"The budget set for {self.category}:\
+             {self.__budget_set:,} USD"
 
 # Divide:
+
+def date_inp():
+    date_str = input('When was the transaction? (YYYY-MM-DD): ')
+    try:
+        datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    except ValueError:
+        print("Incorrect formate. Try again.")
+        return date_inp()
+    return date_str
 
 def budget_set (): # Create categories and budget.
     budget_dict = {}
@@ -42,7 +64,7 @@ def budget_set (): # Create categories and budget.
         inp_categories  = input("Add new category: ")
         while True:
             try:
-                category_budget = int(input(f"Set your budget (as int in USD) for '{inp_categories}': "))
+                category_budget = int(input(f"Set your budget (as int in USD) for '{inp_categories}': $"))
                 break
             except:
                 print("Invalid value. Try again")
@@ -56,16 +78,16 @@ def budget_set (): # Create categories and budget.
         if completed_budget_add.upper() == "Y":
             break
 
-    print(f"\nHere are your expenses's categories: {categories}")
+    print(f"\nYour expenses's categories on {date_inp()}: {categories}")
     print("As detail below:")
 
     budget_dict_s = sorted(budget_dict.items())
     
     for key, value in budget_dict_s:
         print('Budget for "{}": {:,} USD'.format(key,value))
-    file_name = input('\nName your budget file in ".txt": ')
 
-    with open(file_name,"w") as wf: # Write categories and budget into text file.
+    file_name = input('\nName your budget file in ".txt": ')
+    with open(file_name,"w", newline="") as wf: # Write categories and budget into text file.
         for k, v in budget_dict_s:
             wf.write('{} : {:,} USD\n'.format(k,v))
     return (budget_dict_s, categories, file_name)
@@ -86,15 +108,20 @@ def budget_after (file_inp):
                         break
                     else:
                         print("Invalid value. Try again.")
-                budget_aft_trans = cate.transaction(inp)
-                print(f"Your budget on '{cate.category_name()}': ${cate.budget_s()} - ${inp} = {budget_aft_trans:,} USD\n")
-                wf.write('{} : {:,} USD\n'.format(cate.category_name(),budget_aft_trans))
+                wf.write(cate.wf_budget_trans(inp))
+                print(cate.transaction_msg(inp))
+                print(cate.budget_d())
     return file_name_output
 
 if __name__ == "__main__":
     ca1 = Budget("House", 450)
     ca2 = Budget("Food", 200)
-    assert ca1.category_name() == "House", "Value is wrong"
+    
+    assert ca1.wf_budget_trans(50) == "House : 400 USD\n", "Out put is wrong"
     print("Test 1 is passed.")
-    assert ca1.transaction(50) == 400, "Value is wrong"
+
+    assert ca1.budget_s() == 450, "Value is wrong"
     print("Test 2 is passed.")
+
+    assert ca2.__len__() == 4, "Value is wrong"
+    print("Test 3 is passed.")
