@@ -1,3 +1,0 @@
-Food : 1,500 USD
-Housing : 5,000 USD
-Misc : 300 USD

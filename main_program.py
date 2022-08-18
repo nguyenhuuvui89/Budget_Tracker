@@ -13,6 +13,7 @@ if __name__ == "__main__":
                     file_name_input = input(f"\nEnter your budget file '.txt': ")
                     print(f"Your budget details in '{file_name_input}':\n")
                     with open(file_name_input, "r") as file:
+                        print(next(file))
                         for line in file:
                             line_cl = Budget.from_file(line) 
                             print(f"Your budget on '{line_cl.category_name()}': ${line_cl.budget_s():,} USD")

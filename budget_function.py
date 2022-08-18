@@ -21,7 +21,7 @@ class Budget:
 
     def budget_d (self):
         self.budget_dev = self.budget_after_trans
-        if self.budget_dev> 0:
+        if self.budget_dev >= 0:
             return f"{self.category_name()}' budget remain {self.budget_dev:,} USD.\n"
         else:
             return f"{self.category_name()}' budget is overdraft ${self.budget_dev:,} USD.\n"
@@ -50,7 +50,7 @@ class Budget:
 # Divide:
 
 def date_inp():
-    date_str = input('When was the transaction? (YYYY-MM-DD): ')
+    date_str = input('\nWhen was the transaction? (YYYY-MM-DD): ')
     try:
         datetime.datetime.strptime(date_str, "%Y-%m-%d")
     except ValueError:
@@ -61,6 +61,7 @@ def date_inp():
 def budget_set (): # Create categories and budget.
     budget_dict = {}
     categories = set()
+    file_date = date_inp()
     while True:
         inp_categories  = input("Add new category: ")
         print()
@@ -80,7 +81,7 @@ def budget_set (): # Create categories and budget.
         if completed_budget_add.upper() == "Y":
             break
 
-    print(f"\nYour expenses's categories on {date_inp()}: {categories}")
+    print(f"\nYour expenses's categories on {file_date}: {categories}")
     print("As detail below:")
 
     budget_dict_s = sorted(budget_dict.items())
@@ -90,6 +91,7 @@ def budget_set (): # Create categories and budget.
 
     file_name = input('\nName your budget file in ".txt": ')
     with open(file_name,"w", newline="") as wf: # Write categories and budget into text file.
+        wf.write(f"File has been saved on {file_date}.\n")
         for k, v in budget_dict_s:
             wf.write('{} : {:,} USD\n'.format(k,v))
     return (budget_dict_s, categories, file_name)
@@ -99,8 +101,11 @@ def budget_after (file_inp):
         read and write file before and after transactions'''
     
     with open(file_inp, "r") as rf:
-        file_name_output = input("\nEnter your budget report' name after transaction in '.txt': ")
+        file_name_output = input("\nEnter report' name after transaction in '.txt': ")
+        next(rf)
         with open(file_name_output, "w") as wf:
+            file_date = date_inp()
+            wf.write(f"File has been saved on {file_date}.\n")
             for line in rf:
                 cate = Budget.from_file(line)
                 while True:

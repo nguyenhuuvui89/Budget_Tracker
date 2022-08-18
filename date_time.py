@@ -48,4 +48,7 @@
 # from budget_function import budget_after
 # budget_after("anh.txt")
 
-print(f"Your latest budget report' name:'a'")
+with open("nguyen.txt", "r") as file:
+    print(next(file))
+    for line in file:
+        print(line)
