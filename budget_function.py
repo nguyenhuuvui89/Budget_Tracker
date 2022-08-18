@@ -1,10 +1,11 @@
 import datetime
 class Budget:
-    def __init__(self, category, budget_set, budget_dev = 0):
+    def __init__(self, category, budget_set, budget_dev = None):
         self.category = category
         self.__budget_set = budget_set
         self.budget_after_trans = budget_set
-        self.budget_dev = 0
+        self.budget_dev = budget_dev
+
     def category_name(self):
         return self.category
 
@@ -21,12 +22,12 @@ class Budget:
     def budget_d (self):
         self.budget_dev = self.budget_after_trans
         if self.budget_dev> 0:
-            return f"{self.category_name()}' budget remain {self.budget_dev}"
+            return f"{self.category_name()}' budget remain {self.budget_dev:,} USD.\n"
         else:
-            return f"{self.category_name()}' budget is overdraft ${self.budget_dev}"
+            return f"{self.category_name()}' budget is overdraft ${self.budget_dev:,} USD.\n"
 
     def transaction_msg (self, trans_amount):
-        return f"Your '{self.category_name()}' budget: ${self.budget_s():,} - ${trans_amount:,} = {self.budget_after_trans:,} USD\n"
+        return f"Your '{self.category_name()}' budget: ${self.budget_s():,} - ${trans_amount:,} = {self.budget_after_trans:,} USD"
 
     @classmethod
     def from_file(cls, line):
@@ -62,9 +63,10 @@ def budget_set (): # Create categories and budget.
     categories = set()
     while True:
         inp_categories  = input("Add new category: ")
+        print()
         while True:
             try:
-                category_budget = int(input(f"Set your budget (as int in USD) for '{inp_categories}': $"))
+                category_budget = int(input(f"Set your budget (int) for '{inp_categories}': $"))
                 break
             except:
                 print("Invalid value. Try again")
@@ -74,7 +76,7 @@ def budget_set (): # Create categories and budget.
         else: 
             budget_dict[inp_categories] = category_budget
         categories.add(inp_categories)
-        completed_budget_add = input("\nEnter Y if completed add or press any key to continue: ")
+        completed_budget_add = input("\nY - completed or any key to continue: ")
         if completed_budget_add.upper() == "Y":
             break
 
@@ -97,12 +99,12 @@ def budget_after (file_inp):
         read and write file before and after transactions'''
     
     with open(file_inp, "r") as rf:
-        file_name_output = input("\nName your budget file after transactions in '.txt': ")
+        file_name_output = input("\nEnter your budget report' name after transaction in '.txt': ")
         with open(file_name_output, "w") as wf:
             for line in rf:
                 cate = Budget.from_file(line)
                 while True:
-                    inp = input(f"How much did you spend on '{cate.category_name()}' (as int in USD): ")
+                    inp = input(f"How much did you spend on '{cate.category_name()}' (int):$ ")
                     if inp.isnumeric():
                         inp = int(inp)
                         break
@@ -112,6 +114,20 @@ def budget_after (file_inp):
                 print(cate.transaction_msg(inp))
                 print(cate.budget_d())
     return file_name_output
+
+def introduction ():
+
+    name = input("What is your name: ")
+    print(f"Hi {name}!. Welcome to Budget App. \n")
+    print("Choose options below:\n", 
+        "1. Set your own budget's list. \n",
+        "2. Use exist budget's list. " )
+    while True:
+        inp = input("Which option do you choose? 1 or 2: ")
+        if inp == "1" or inp == "2":
+            return inp
+        else:
+            print("Please type 1 or 2 only.")
 
 if __name__ == "__main__":
     ca1 = Budget("House", 450)

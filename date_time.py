@@ -45,5 +45,7 @@
 #         csv_writer = csv.writer(wf, delimiter=" ")
 #         for line in csv_reader:
 #            csv_writer.writerow(line)
-from budget_function import budget_after
-budget_after("anh.txt")
+# from budget_function import budget_after
+# budget_after("anh.txt")
+
+print(f"Your latest budget report' name:'a'")

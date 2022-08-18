@@ -1,0 +1,3 @@
+Food : 1,498 USD
+Housing : -20 USD
+Misc : -2,700 USD
