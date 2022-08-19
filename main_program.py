@@ -22,6 +22,8 @@ if __name__ == "__main__":
         if option == "1":
             # option 1 for create budget list from scratch.
             budget_l = budget_function.budget_set()
+        elif option == "2":
+            add_cate = budget_function.add_cate_budget()
         else:
             while True:
                 try:

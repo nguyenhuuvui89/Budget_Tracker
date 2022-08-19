@@ -8,6 +8,7 @@ Budget tracker transaction, can either using existing data or create new data.
 Get output report file after transactions.
 """
 import datetime
+import glob
 
 class Budget:
     '''This class constructs the Budget Objects and its attributes'''
@@ -15,7 +16,7 @@ class Budget:
         '''Initialize constructor.'''
         self.category = category
         self.__budget_set = budget_set
-        self.budget_after_trans = budget_set
+        self.budget_after_trans = None
         self.budget_dev = budget_dev
 
     def category_name(self):
@@ -28,7 +29,11 @@ class Budget:
         
     def __transaction(self, trans_amount):
         '''Return budget amount after making transactions'''
-        self.budget_after_trans -= trans_amount
+        self.budget_after_trans = self.__budget_set - trans_amount
+        return self.budget_after_trans
+
+    def budget_remain(self):
+        "Return budget after transaction."
         return self.budget_after_trans
 
     def wf_budget_trans (self, trans_amount):
@@ -81,6 +86,36 @@ def date_inp():
         return date_inp()
     return date_str
 
+def add_cate_budget ():
+    '''This function use to add new category to the existing budget file.'''
+    add_category = set()
+    # List all existing budget file.
+    text_files = [file for file in glob.glob("*.txt")]
+    print(f"\nHere are list existing budget files {text_files}")
+    while True:
+        file_n = input("Enter file name to be added (.txt): ")
+        if file_n in text_files:
+            break
+        else:
+            print("Your file does not exist. Try input files in list.")
+    # Open file and append new category to file.
+    with open (file_n,"a") as af:
+        while True:
+            add_cate = input("Add new category: ")
+            while True:
+                    try:
+                        add_budget = int(input(f"Add your budget (int) for '{add_cate}': $"))
+                        break
+                    except:
+                        print("Invalid value. Try again")
+            af.write('{} : {:,} USD\n'.format(add_cate,add_budget))
+            add_category.add(add_cate)
+            completed_add = input("\nY - completed or any key to continue: ")
+            if completed_add.upper() == "Y":
+                break
+    print(f"Here are added categories: {add_category}")
+    return file_n
+
 def budget_set ():
     '''Create function to create own budget list from scratch.'''
     budget_dict = {}
@@ -104,8 +139,8 @@ def budget_set ():
         else: 
             budget_dict[inp_categories] = category_budget
             
-        completed_budget_add = input("\nY - completed or any key to continue: ")
-        if completed_budget_add.upper() == "Y":
+        completed_budget_set = input("\nY - completed or any key to continue: ")
+        if completed_budget_set.upper() == "Y":
             break
 
     print(f"\nYour input categories'name: {categories}")
@@ -135,6 +170,7 @@ def budget_after (file_inp):
         next(rf)
         # open and write to file.
         with open(file_name_output, "w") as wf:
+            budget_aft = set()
             file_date = date_inp()
             # Write date which provided by user.
             wf.write(f"File has been saved on {file_date}.\n")
@@ -154,6 +190,8 @@ def budget_after (file_inp):
                 # print out message to show to user by using Budget methods.
                 print(cate.transaction_msg(inp))
                 print(cate.budget_d())
+                budget_aft.add('{} : {:,} USD'.format(cate.category_name(),cate.budget_remain()))
+            print(f"Summary of budget after transaction: {budget_aft}")
     return file_name_output
 
 def option ():
@@ -161,13 +199,14 @@ def option ():
 
     print("Choose options below:\n", 
         "1. Set your own budget's list. \n",
-        "2. Use exist budget's list. " )
+        "2. Add new categories to existing budget'list"
+        "3. Use exist budget's list to make transactions. " )
     while True:
         inp = input("Which option do you choose? 1 or 2: ")
-        if inp == "1" or inp == "2":
+        if inp == "1" or inp == "2" or inp == "3":
             return inp
         else:
-            print("Please type 1 or 2 only.")
+            print("Please type 1, 2 or 3 only.")
 
 if __name__ == "__main__":
     # create Objects for testing methods purposes.
@@ -186,3 +225,5 @@ if __name__ == "__main__":
     print("Test 3 is passed.")
     assert ca2.budget_d() == f"{ca2.category_name()}' budget remain {ca2.budget_dev:,} USD.\n", "Value is wrong"
     print("Test 4 is passed.")
+    assert ca2.budget_remain() == ca2.budget_after_trans, "Value is wrong"
+    print("Test 5 is passed.")
