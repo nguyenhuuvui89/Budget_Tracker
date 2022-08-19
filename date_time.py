@@ -47,8 +47,8 @@
 #            csv_writer.writerow(line)
 # from budget_function import budget_after
 # budget_after("anh.txt")
-
-with open("nguyen.txt", "r") as file:
-    print(next(file))
-    for line in file:
-        print(line)
+import glob
+from budget_function import Budget
+my_list = {f for f in glob.glob("*.txt")}
+print(my_list)
+print(f"Your '{self.category_name()}' budget: ${self.budget_s():,} - ${trans_amount:,} = {self.budget_after_trans:,} USD.")
