@@ -77,7 +77,7 @@ class Budget:
         return f"The budget set for {self.category}: {self.__budget_set:,} USD"
 
 def date_inp():
-    '''Create function to track date of the file create.'''
+    '''Create function to record date of the file create.'''
     date_str = input('\nWhen was the transaction? (YYYY-MM-DD): ')
     try:
         datetime.datetime.strptime(date_str, "%Y-%m-%d")
@@ -199,10 +199,10 @@ def option ():
 
     print("Choose options below:\n", 
         "1. Set your own budget's list. \n",
-        "2. Add new categories to existing budget'list"
-        "3. Use exist budget's list to make transactions. " )
+        "2. Add new categories to existing budget' list. \n",
+        "3. Use exist budget's list to make transactions. ")
     while True:
-        inp = input("Which option do you choose? 1 or 2: ")
+        inp = input("Which option do you choose? 1 or 2 or 3: ")
         if inp == "1" or inp == "2" or inp == "3":
             return inp
         else:
@@ -215,6 +215,7 @@ if __name__ == "__main__":
     sum = ca1 + ca2
     cate_len = ca1.category_name()
     ca2.wf_budget_trans(50)
+    print(ca1)
 
     # Test methods.
     assert ca2.budget_after_trans == 150, "Output is wrong"
