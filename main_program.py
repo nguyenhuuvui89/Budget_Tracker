@@ -17,19 +17,19 @@ if __name__ == "__main__":
     print(f"Hi {name}!. Welcome to Budget App. \n")
     msg = True
     while msg:
-        # choose the option.
+        # Choose the option.
         option = budget_function.option()
         if option == "1":
-            # option 1 for create budget list from scratch.
+            # Option 1 for create budget list from scratch.
             budget_l = budget_function.budget_set()
         elif option == "2":
-            # option 2 for add new category to existing file.
+            # Option 2 for add new category to existing file.
             add_cate = budget_function.add_cate_budget()
         else:
-            # this option will use to make transactions and get output report file.
+            # This option will use to make transactions and get output report file.
             while True:
                 try:
-                    # get list all of existing text files in folder.
+                    # Get list all of existing text files in folder.
                     text_files = [file for file in glob.glob("*.txt")]
                     print(f"\nHere are list existing budget files {text_files}")
 
