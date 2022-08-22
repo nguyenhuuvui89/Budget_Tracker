@@ -1,0 +1,5 @@
+File has been saved on 2022-06-01.
+Food : 1,000 USD
+House : 2,000 USD
+Bills : 500 USD
+Movies : 250 USD
